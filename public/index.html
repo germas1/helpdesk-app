@@ -233,7 +233,7 @@
                             <option value="GUYDOUX">GUYDOUX</option>
                             <option value="CEDRICK">CEDRICK</option>
                             <option value="JONATHAN">JONATHAN</option>
-                            <option value="ECCLESIASTE">ECCLESISTE</option>
+                            <option value="ECCLESISTE">ECCLESISTE</option>
                             <option value="HERVE">HERVE</option>
                         </select>
                     </div>
@@ -684,88 +684,13 @@
             });
         }
 
-       function exportToExcel() {
-    const tickets = getLocalTickets();
-    if (tickets.length === 0) {
-        alert("Aucun ticket à exporter.");
-        return;
-    }
-
-    // Données à exporter
-    const dataToExport = tickets.map(t => ({
-        "Ticket ID": t.ticket_id,
-        "Requester": t.requester,
-        "Auid": t.auid,
-        "Hostname": t.hostname,
-        "Problem Description": t.problem_description,
-        "Item": t.item,
-        "Category of Issues": t.category_of_issues,
-        "Priority": t.priority,
-        "Time Spent (min)": t.time_spent,
-        "Status": t.status,
-        "Type Intervention": t.type_intervention,
-        "Due Date": t.due_date,
-        "Action Performed": t.action_performed,
-        "Assignee": t.assignee
-    }));
-
-    // Création de la feuille de calcul
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-
-    // Application des styles professionnels (En-tête stylé, bordures, alignement)
-    const range = XLSX.utils.decode_range(worksheet['!ref']);
-    
-    for (let C = range.s.c; C <= range.e.c; ++C) {
-        const headerCellAddress = XLSX.utils.encode_cell({ r: 0, c: C });
-        if (!worksheet[headerCellAddress]) continue;
-        
-        // Style pour l'en-tête (Fond bleu nuit/ardoise, texte blanc en gras)
-        worksheet[headerCellAddress].s = {
-            fill: { fgColor: { rgb: "0F172A" } },
-            font: { color: { rgb: "FFFFFF" }, bold: true, sz: 11, name: "Calibri" },
-            alignment: { horizontal: "center", vertical: "center" },
-            border: {
-                top: { style: "thin", color: { rgb: "000000" } },
-                bottom: { style: "thin", color: { rgb: "000000" } },
-                left: { style: "thin", color: { rgb: "000000" } },
-                right: { style: "thin", color: { rgb: "000000" } }
+        function exportToExcel() {
+            const tickets = getLocalTickets();
+            if (tickets.length === 0) {
+                alert("Aucun ticket à exporter.");
+                return;
             }
-        };
-    }
 
-    // Styles pour les lignes de données
-    for (let R = range.s.r + 1; R <= range.e.r; ++R) {
-        for (let C = range.s.c; C <= range.e.c; ++C) {
-            const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-            if (!worksheet[cellAddress]) continue;
-
-            worksheet[cellAddress].s = {
-                font: { sz: 10, name: "Calibri", color: { rgb: "333333" } },
-                alignment: { vertical: "center", horizontal: "left" },
-                border: {
-                    top: { style: "thin", color: { rgb: "E2E8F0" } },
-                    bottom: { style: "thin", color: { rgb: "E2E8F0" } },
-                    left: { style: "thin", color: { rgb: "E2E8F0" } },
-                    right: { style: "thin", color: { rgb: "E2E8F0" } }
-                }
-            };
-        }
-    }
-
-    // Ajustement automatique de la largeur des colonnes
-    const colWidths = [];
-    dataToExport.forEach(row => {
-        Object.keys(row).forEach((key, i) => {
-            const val = String(row[key] || '');
-            colWidths[i] = Math.max(colWidths[i] || key.length, val.length + 3);
-        });
-    });
-    worksheet['!cols'] = colWidths.map(w => ({ wch: Math.min(w, 30) }));
-
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Incidents IT");
-    XLSX.writeFile(workbook, "Helpdesk_Incident_Tracker_Pro.xlsx");
-}
             const dataToExport = tickets.map(t => ({
                 "Ticket ID": t.ticket_id,
                 "Requester": t.requester,
